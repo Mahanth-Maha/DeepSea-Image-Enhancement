@@ -81,13 +81,13 @@ def plot_img_3_pair(img1, img2, img3, title1='', title2='', title3='', save=None
 def plot_img_4_pair(img1, img2, img3, img4, title1='', title2='', title3='', title4='', save=None, cmap='gray'):
     images = [img1, img2, img3, img4]
     titles = [title1, title2, title3, title4]
-
+    font_size = int(FONT_SIZE * 0.75)
     fig, axes = plt.subplots(2, 2, figsize=(FIG_WIDTH, int(FIG_WIDTH * 0.75)))
     axes = axes.flatten()
 
     for ax, img, title in zip(axes, images, titles):
         ax.imshow(img, cmap=cmap if img.ndim == 2 else None)
-        ax.set_title(title, fontsize=int(FONT_SIZE * 0.9))
+        ax.set_title(title, fontsize=font_size)
         ax.axis('off')
 
     plt.tight_layout(pad=1.0)
