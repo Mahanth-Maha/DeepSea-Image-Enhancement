@@ -37,7 +37,7 @@ def apply_gamma_correction(image, gamma=None):
         gamma = np.log(0.5) / np.log(mean_intensity + 1e-8)
         gamma = np.clip(gamma, 0.5, 2.0)
 
-    corrected = np.power(image / 255.0, gamma)
+    corrected = np.power(image / 255.0, gamma).astype(np.float32)
     corrected = np.uint8(np.clip(corrected * 255, 0, 255))
 
     gray_after = cv2.cvtColor(corrected, cv2.COLOR_BGR2GRAY)

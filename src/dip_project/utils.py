@@ -12,7 +12,7 @@ FIG_WIDTH = 12
 #### image Processing
 def load_image(filepath):
     img = plt.imread(filepath)
-    if img.dtype == np.float32 or img.dtype == np.float64:
+    if img.dtype in [np.float32, np.float64]:
         if img.max() <= 1.0:
             img = (img * 255).astype(np.uint8)
         else:
@@ -127,9 +127,10 @@ def plot_hist_2_pair(img_hist1, img_hist2, title1='Histogram 1', title2='Histogr
         img_hist1 = img_hist1.ravel()
     if isinstance(img_hist2, np.ndarray):
         img_hist2 = img_hist2.ravel()
-    axes[0].bar(range(len(img_hist1)), img_hist1)
+    axes[0].bar(range(len(img_hist1)), img_hist1, label = title1)
     axes[0].set_title(title1, fontsize=FONT_SIZE)
     axes[0].set_xlabel('Pixel Intensity')
+    axes[0].legend()
     axes[0].set_ylabel('Frequency')
     axes[0].set_xlim([-5, len(img_hist1)-1+5])
     axes[0].set_xticks(np.arange(0, len(img_hist1)+1, step=max(1, len(img_hist1)//8)))
@@ -137,10 +138,11 @@ def plot_hist_2_pair(img_hist1, img_hist2, title1='Histogram 1', title2='Histogr
         axes[0].axvline(x=otsu_thresh1, color='r', linestyle='--', label=f'Otsu Threshold = {otsu_thresh1}')
         axes[0].legend(fontsize=FONT_SIZE)
     axes[0].grid()
-    axes[1].bar(range(len(img_hist2)), img_hist2)
+    axes[1].bar(range(len(img_hist2)), img_hist2, label = title2)
     axes[1].set_title(title2, fontsize=FONT_SIZE)
     axes[1].set_xlabel('Pixel Intensity')
     axes[1].set_ylabel('Frequency')
+    axes[1].legend()
     axes[1].set_xlim([-5, len(img_hist2)-1+5])
     axes[1].set_xticks(np.arange(0, len(img_hist2)+1, step=max(1, len(img_hist2)//8)))
     if otsu_thresh2 is not None:
@@ -189,10 +191,11 @@ def plot_hist_curve_2_pair(img_hist1, img_hist2, title1='Histogram 1 (Curve)', t
         img_hist2 = img_hist2.ravel()
     x1 = np.arange(len(img_hist1))
     x2 = np.arange(len(img_hist2))
-    axes[0].plot(x1, img_hist1, color='blue', linewidth=2)
+    axes[0].plot(x1, img_hist1, color='blue', linewidth=2, label = title1)
     axes[0].set_title(title1, fontsize=FONT_SIZE)
     axes[0].set_xlabel('Pixel Intensity')
     axes[0].set_ylabel('Frequency')
+    axes[0].legend()
     axes[0].set_xlim([-5, len(img_hist1)-1+5])
     axes[0].set_xticks(np.arange(0, len(img_hist1)+1, step=max(1, len(img_hist1)//8)))
     if otsu_thresh1 is not None:
@@ -201,10 +204,11 @@ def plot_hist_curve_2_pair(img_hist1, img_hist2, title1='Histogram 1 (Curve)', t
     axes[0].grid(True, linestyle='--', alpha=0.5)
     axes[1].plot(x2, img_hist2, color='green', linewidth=2)
     if overlay_1_on_2:
-        axes[1].plot(x1, img_hist1, color='blue', linewidth=0.25)
+        axes[1].plot(x1, img_hist1, color='blue', linewidth=0.25, label = title2)
     axes[1].set_title(title2, fontsize=FONT_SIZE)
     axes[1].set_xlabel('Pixel Intensity')
     axes[1].set_ylabel('Frequency')
+    axes[1].legend()
     axes[1].set_xlim([-5, len(img_hist2)-1+5])
     axes[1].set_xticks(np.arange(0, len(img_hist2)+1, step=max(1, len(img_hist2)//8)))
     if otsu_thresh2 is not None:
@@ -349,3 +353,4 @@ def sharpen_kernel():
 
 def emboss_kernel():
     return np.array([[-2, -1, 0],[-1,  1, 1],[ 0,  1, 2]]) , 'emboss'
+
