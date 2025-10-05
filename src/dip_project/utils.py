@@ -220,6 +220,64 @@ def plot_hist_curve_2_pair(img_hist1, img_hist2, title1='Histogram 1 (Curve)', t
     plt.close(fig)
 
 
+
+def plot_hist_curve_3_pair(img_hist1, img_hist2, img_hist3, title1='Histogram 1 (Curve)', title2='Histogram 2 (Curve)', title3='Histogram 3 (Curve)', overlay_1_on_2 = False, overlay_1_on_3 = False, overlay_2_on_3 = False, overlay_alpha = 0.25, save=None, otsu_thresh1=None, otsu_thresh2=None, otsu_thresh3=None):
+    fig, axes = plt.subplots(1, 3, figsize=(FIG_WIDTH, FIG_WIDTH//3))
+    font_size = int(FONT_SIZE * 0.8)
+    if isinstance(img_hist1, np.ndarray):
+        img_hist1 = img_hist1.ravel()
+    if isinstance(img_hist2, np.ndarray):
+        img_hist2 = img_hist2.ravel()
+    if isinstance(img_hist3, np.ndarray):
+        img_hist3 = img_hist3.ravel()
+    x1 = np.arange(len(img_hist1))
+    x2 = np.arange(len(img_hist2))
+    x3 = np.arange(len(img_hist2))
+    axes[0].plot(x1, img_hist1, color='blue', linewidth=2)
+    axes[0].set_title(title1, fontsize=font_size)
+    axes[0].set_xlabel('Pixel Intensity')
+    axes[0].set_ylabel('Frequency')
+    axes[0].set_xlim([-5, len(img_hist1)-1+5])
+    axes[0].set_xticks(np.arange(0, len(img_hist1)+1, step=max(1, len(img_hist1)//8)))
+    if otsu_thresh1 is not None:
+        axes[0].axvline(x=otsu_thresh1, color='r', linestyle='--', label=f'Otsu Threshold = {otsu_thresh1}')
+        axes[0].legend(fontsize=font_size)
+    axes[0].grid(True, linestyle='--', alpha=0.5)
+    axes[1].plot(x2, img_hist2, color='green', linewidth=2)
+    if overlay_1_on_2:
+        axes[1].plot(x1, img_hist1, color='blue', linewidth=overlay_alpha)
+    axes[1].set_title(title2, fontsize=font_size)
+    axes[1].set_xlabel('Pixel Intensity')
+    axes[1].set_ylabel('Frequency')
+    axes[1].set_xlim([-5, len(img_hist2)-1+5])
+    axes[1].set_xticks(np.arange(0, len(img_hist2)+1, step=max(1, len(img_hist2)//8)))
+    if otsu_thresh2 is not None:
+        axes[1].axvline(x=otsu_thresh2, color='r', linestyle='--', label=f'Otsu Threshold = {otsu_thresh2}')
+        axes[1].legend(fontsize=font_size)
+    axes[1].grid(True, linestyle='--', alpha=0.5)
+    axes[2].plot(x3, img_hist3, color='orange', linewidth=2)
+    if overlay_1_on_3:
+        axes[2].plot(x1, img_hist1, color='blue', linewidth=overlay_alpha)
+    if overlay_2_on_3:
+        axes[2].plot(x2, img_hist2, color='green', linewidth=overlay_alpha)
+    axes[2].set_title(title3, fontsize=font_size)
+    axes[2].set_xlabel('Pixel Intensity')
+    axes[2].set_ylabel('Frequency')
+    axes[2].set_xlim([-5, len(img_hist3)-1+5])
+    axes[2].set_xticks(np.arange(0, len(img_hist3)+1, step=max(1, len(img_hist3)//8)))
+    if otsu_thresh3 is not None:
+        axes[2].axvline(x=otsu_thresh3, color='r', linestyle='--', label=f'Otsu Threshold = {otsu_thresh3}')
+        axes[2].legend(fontsize=font_size)
+    axes[2].grid(True, linestyle='--', alpha=0.5)
+
+    plt.tight_layout()
+    if save:
+        plt.savefig(save)
+    if SHOW_IMAGES:
+        plt.show()
+    plt.close(fig)
+
+
 def plot_kernel(kernel, type_of='',save=None,):
     plt.figure(figsize=(FIG_WIDTH//2,FIG_WIDTH//2))
     min_, max_ = kernel.min(), kernel.max()
