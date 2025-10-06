@@ -51,33 +51,52 @@ def UCIQE(image_rgb):
     uciqe = 0.4680 * sigma_c + 0.2745 * mean_s + 0.2576 * sigma_l
     return float(uciqe)
 
-
 def UICM(img):
+    # Expect img as BGR uint8 (0–255)
+    img = img.astype(np.float32) / 255.0  # normalize to [0,1]
     R, G, B = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+    # Color difference components
     rg = R - G
     yb = 0.5 * (R + G) - B
+
     mean_rg, std_rg = np.mean(rg), np.std(rg)
     mean_yb, std_yb = np.mean(yb), np.std(yb)
+
     uicm = np.sqrt(std_rg**2 + std_yb**2) + 0.3 * np.sqrt(mean_rg**2 + mean_yb**2)
-    return uicm
+    return float(uicm)
+
+
 def UISM(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Sharpness measure based on gradient magnitude
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255.0
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
     gradient_magnitude = np.sqrt(sobelx**2 + sobely**2)
+
+    # Normalize the gradient before taking mean
     uism = np.mean(gradient_magnitude)
-    return uism
+    return float(uism)
+
+
 def UIConM(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Contrast measure using normalized luminance
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32) / 255.0
     con_m = np.std(gray)
-    return con_m
+    return float(con_m)
+
 
 def UIQM(img):
     uicm = UICM(img)
     uism = UISM(img)
     uiconm = UIConM(img)
-    uiqm = 0.0282 * uicm + 0.2953 * uism + 3.5753 * uiconm
-    return uiqm, uicm, uism, uiconm
+
+    # Coefficients from Panetta et al.
+    c1, c2, c3 = 0.0282, 0.2953, 3.5753
+    uiqm = c1 * uicm + c2 * uism + c3 * uiconm
+
+    return float(uiqm), float(uicm), float(uism), float(uiconm)
+
 
 
 
